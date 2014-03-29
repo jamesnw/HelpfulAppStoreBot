@@ -11,7 +11,7 @@ from time import gmtime, strftime
 log_file = open('logs/log.txt','a+')
 
 #app store info
-affiliate = open(user+"private/affiliate.txt", "r").read().rstrip()
+affiliate = open("private/affiliate.txt", "r").read().rstrip()
 campaign = "rdtb";
 aff_string = "?at=" + affiliate + "&ct=" + campaign
 
