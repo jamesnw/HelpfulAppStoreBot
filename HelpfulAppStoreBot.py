@@ -60,8 +60,8 @@ def query_yes_no(question, default="yes"):
 #user = "justanothertestaccou"
 user = "HelpfulAppStoreBot"
 
-username = open(user+"private/users/username.txt", "r").read().rstrip()
-password = open(user+"private/users/password.txt", "r").read().rstrip()
+username = open("private/users/"+user+"username.txt", "r").read().rstrip()
+password = open("private/users/"+user+"password.txt", "r").read().rstrip()
 user_agent = ("HelpfulAppStoreBot, linking to iOS Apps")
 
 reddit = praw.Reddit(user_agent = user_agent)
