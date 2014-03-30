@@ -175,7 +175,7 @@ while(keep_on):
 								reply = reply + comment_reply(name = app.name, id = str(app.id))
 								already_done.add(comment.id)
 				if len(reply) > 0:
-					reply = reply + "\n [Source](https://github.com/jamesnw/HelpfulAppStoreBot/)."
+					reply = reply + "\n [What is this?](http://www.reddit.com/r/iphone/comments/21s2yf/im_up_and_running_use_the_command_app_link/) - [Source](https://github.com/jamesnw/HelpfulAppStoreBot/)."
 					posted_reply = comment.reply(reply)
 					jlog("Replied to %s with %s" % (comment.id, posted_reply.id))
 					comment_posted = True
