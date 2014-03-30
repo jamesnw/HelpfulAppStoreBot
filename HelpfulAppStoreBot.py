@@ -18,7 +18,6 @@ import signal
 
 #file-wide setup
 
-log_file = open('logs/log.txt','a+')
 dbFile = "logs/cachedapps.p"
 
 #app store info
@@ -34,7 +33,9 @@ def comment_reply(id, name):
 def jlog(message):
 	"Write to log with time"
 	time = strftime("%d %b %Y %H:%M:%S", gmtime())
+	log_file = open('logs/log.txt','a+')
 	log_file.write(time+": " + message + "\n")
+	log_file.close()
 	
 def query_yes_no(question, default="yes"):
     """Ask a yes/no question via raw_input() and return their answer.
@@ -124,7 +125,7 @@ jlog("logged in");
 #Look for comments
 subreddits = set()
 subreddits.add('iphone')
-subreddits.add('ios')
+#subreddits.add('ios')
 #subreddits.add('test')
 
 subreddit_list = '+'.join(subreddits)
