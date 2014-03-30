@@ -70,7 +70,12 @@ jlog("logged in");
     
 v_fixed = []
 #Look for comments
-subreddit = reddit.get_subreddit('iphone+ios')
+subreddits = set()
+subreddits.add('iphone')
+subreddits.add('ios')
+subreddit_list = '+'.join(subreddits)
+subreddit = reddit.get_subreddit(subreddit_list)
+
 subreddit_comments = subreddit.get_comments()
 
 already_done_file = open('logs/already_done.txt','a+')
