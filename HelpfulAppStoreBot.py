@@ -109,8 +109,8 @@ atexit.register(exit_handler)
 
 
 ## Allow for easy switching between accounts                             	
-user = "justanothertestaccou"
-#user = "HelpfulAppStoreBot"
+#user = "justanothertestaccou"
+user = "HelpfulAppStoreBot"
 
 username = open("private/users/"+user+"/username.txt", "r").read().rstrip()
 password = open("private/users/"+user+"/password.txt", "r").read().rstrip()
@@ -123,9 +123,9 @@ jlog("logged in");
 
 #Look for comments
 subreddits = set()
-#subreddits.add('iphone')
-#subreddits.add('ios')
-subreddits.add('test')
+subreddits.add('iphone')
+subreddits.add('ios')
+#subreddits.add('test')
 
 subreddit_list = '+'.join(subreddits)
 
@@ -153,7 +153,6 @@ while(keep_on):
 		with open(dbFile, "r+") as fi:
 			if fi.tell() != os.fstat(fi.fileno()).st_size:
 				appList = pickle.load(fi)
-				pprint("loaded");
 
 	comment_posted = False
 	findAppLink = re.compile("\\bapp[\s]*link[\s]*:[\s]*(.*)", re.M)
@@ -176,12 +175,10 @@ while(keep_on):
 								already_done.add(comment.id)
 				if len(reply) > 0:
 					reply = reply + "\n If you prefer to give an extra 7% to Apple instead of this bot, please use the non-affiliate link."
-					print comment.body
 					posted_reply = comment.reply(reply)
 					jlog("Replied to %s with %s" % (comment.id, posted_reply.id))
 					comment_posted = True
 					already_done_file.write(posted_reply.id+"\n");
-					print "Replied"
 				already_done_file.write(comment.id+"\n");
 		else:
 			jlog("Hey, it's you- %s" % comment.id)
