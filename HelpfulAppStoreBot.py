@@ -7,8 +7,15 @@ import sys
 import json
 from pprint import pprint
 from time import gmtime, strftime
+import requests
+import pickle
+import atexit
+import os
+
+#file-wide setup
 
 log_file = open('logs/log.txt','a+')
+dbFile = "logs/cachedapps.p"
 
 #app store info
 affiliate = open("private/affiliate.txt", "r").read().rstrip()
@@ -56,23 +63,66 @@ def query_yes_no(question, default="yes"):
         else:
             sys.stdout.write("Please respond with 'yes' or 'no' "\
                              "(or 'y' or 'n').\n")
+
+#Create an app class
+class App:
+	def __init__(self, searchterm):
+		self.searchterm = searchterm
+		self.success = 0
+		#Check if cache exists		
+		for app in appList:
+			if(self.success != 1):
+				if app.searchterm == self.searchterm:
+					self.success = 1
+					self.id = app.id
+					self.name = app.name
+		if(self.success != 1):
+			#no cache found, searching server
+			search_url = 'https://itunes.apple.com/search'
+			data = dict()
+			data['term'] = searchterm
+			data['media'] = 'software'
+			data['limit'] = 1
+			data = requests.get(url=search_url, params=data)
+			if(data.status_code == 200):
+				output = json.loads(data.content)
+				if(output['resultCount'] > 0):
+					self.id = output['results'][0]['trackId']
+					self.name = output['results'][0]['trackName']
+					self.success = 1
+					appList.append(self)
+
+def exit_handler():
+	# Dump the caches
+    try:
+        with open(dbFile, 'w+') as db_file:
+            pickle.dump(appList, db_file)
+    except Exception as search_exception:
+        pass
+
+    print("Shutting Down\n\n\n")
+atexit.register(exit_handler)
+
+
 ## Allow for easy switching between accounts                             	
 #user = "justanothertestaccou"
 user = "HelpfulAppStoreBot"
 
 username = open("private/users/"+user+"/username.txt", "r").read().rstrip()
 password = open("private/users/"+user+"/password.txt", "r").read().rstrip()
-user_agent = ("HelpfulAppStoreBot, linking to iOS Apps")
+user_agent = ("HelpfulAppStoreBot, linking to iOS Apps," + user)
 
 reddit = praw.Reddit(user_agent = user_agent)
 reddit.login(username = username, password = password)
 jlog("logged in");
-    
-v_fixed = []
+
+
 #Look for comments
 subreddits = set()
 subreddits.add('iphone')
 subreddits.add('ios')
+#subreddits.add('test')
+
 subreddit_list = '+'.join(subreddits)
 subreddit = reddit.get_subreddit(subreddit_list)
 
@@ -85,28 +135,40 @@ already_done_to_add = set()
 jlog("Already done: %i" % len(already_done))
 
 #load apps
-apps = json.load(open('apps.json'))
+appList = []
+if os.path.isfile(dbFile):
+	with open(dbFile, "r+") as fi:
+		if fi.tell() != os.fstat(fi.fileno()).st_size:
+			appList = pickle.load(fi)
+			pprint("loaded");
 
 comment_posted = False
+findAppLink = re.compile("\\bapp[\s]*link[\s]*:[\s]*(.*)", re.M)
+
 
 for comment in subreddit_comments:
 	if comment.author != user:
 		if comment.id not in already_done and comment_posted == False: 
 			jlog("\t%s" % comment.id)
 			reply = '';
-			for app in apps:
-				if app["name"] in comment.body:
-					reply = reply + comment_reply(name = app["name"], id = app["id"])
-					already_done.add(comment.id)
+			
+			normalMatches = findAppLink.findall(comment.body.lower())
+			if len(normalMatches) > 0:
+				for match in normalMatches:
+					apps = match.split(",")
+					for appstring in apps:
+						app = App(appstring)
+						if(app.success):
+							reply = reply + comment_reply(name = app.name, id = str(app.id))
+							already_done.add(comment.id)
 			if len(reply) > 0:
 				reply = reply + "\n If you prefer to give an extra 7% to Apple instead of this bot, please use the non-affiliate link."
 				print comment.body
-				if query_yes_no("Post reply to this comment?"):
-					posted_reply = comment.reply(reply)
-					jlog("Replied to %s with %s" % (comment.id, posted_reply.id))
-					comment_posted = True
-					already_done_file.write(posted_reply.id+"\n");
-					print "Replied"
+				posted_reply = comment.reply(reply)
+				jlog("Replied to %s with %s" % (comment.id, posted_reply.id))
+				comment_posted = True
+				already_done_file.write(posted_reply.id+"\n");
+				print "Replied"
 			already_done_file.write(comment.id+"\n");
 	else:
 		jlog("Hey, it's you- %s" % comment.id)
