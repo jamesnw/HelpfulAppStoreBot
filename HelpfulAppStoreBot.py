@@ -18,7 +18,7 @@ import signal
 
 #file-wide setup
 
-dbFile = "logs/cachedapps.p"
+dbFile = "/tmp/cachedapps.p"
 
 #app store info
 affiliate = open("private/affiliate.txt", "r").read().rstrip()
@@ -105,7 +105,7 @@ def exit_handler():
     except Exception as search_exception:
         pass
 
-    print("Shutting Down\n\n\n")
+    print("Shutting Down\n")
 atexit.register(exit_handler)
 
 
