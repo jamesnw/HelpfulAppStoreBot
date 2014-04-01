@@ -15,6 +15,9 @@ import atexit
 import os
 import time
 import signal
+from tendo import singleton
+
+me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running
 
 #file-wide setup
 
@@ -24,6 +27,8 @@ dbFile = "/tmp/cachedapps.p"
 affiliate = open("private/affiliate.txt", "r").read().rstrip()
 campaign = "rdtb";
 aff_string = "?at=" + affiliate + "&ct=" + campaign
+
+appList = []
 
 def comment_reply(id, name):
 	"This formats a comment based on a name and id"
@@ -102,10 +107,12 @@ def exit_handler():
     try:
         with open(dbFile, 'w+') as db_file:
             pickle.dump(appList, db_file)
+    	
     except Exception as search_exception:
         pass
 
     print("Shutting Down\n")
+    jlog("Shut down")
 atexit.register(exit_handler)
 
 
@@ -134,10 +141,12 @@ keep_on = True
 def kill_handler(sig, frame):
     global keep_on
     keep_on = False
+    
 signal.signal(signal.SIGUSR1, kill_handler)
 
 #main loop
 while(keep_on):
+	jlog("Start loop")
 	subreddit = reddit.get_subreddit(subreddit_list)
 
 	subreddit_comments = subreddit.get_comments()
@@ -146,10 +155,7 @@ while(keep_on):
 	already_done = set(line.strip() for line in open('logs/already_done.txt'))
 	already_done_to_add = set()
 
-	jlog("Already done: %i" % len(already_done))
-
 	#load apps
-	appList = []
 	if os.path.isfile(dbFile):
 		with open(dbFile, "r+") as fi:
 			if fi.tell() != os.fstat(fi.fileno()).st_size:
