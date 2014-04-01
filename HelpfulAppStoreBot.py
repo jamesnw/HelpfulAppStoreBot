@@ -24,7 +24,9 @@ me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running
 dbFile = "/tmp/cachedapps.p"
 
 #app store info
-affiliate = open("private/affiliate.txt", "r").read().rstrip()
+affiliate_file = open("private/affiliate.txt", "r")
+affiliate = affiliate_file.read().rstrip()
+affiliate_file.close()
 campaign = "rdtb";
 aff_string = "?at=" + affiliate + "&ct=" + campaign
 
@@ -120,8 +122,12 @@ atexit.register(exit_handler)
 #user = "justanothertestaccou"
 user = "HelpfulAppStoreBot"
 
-username = open("private/users/"+user+"/username.txt", "r").read().rstrip()
-password = open("private/users/"+user+"/password.txt", "r").read().rstrip()
+username_file = open("private/users/"+user+"/username.txt", "r")
+username = username_file.read().rstrip()
+username_file.close()
+password_file = open("private/users/"+user+"/password.txt", "r")
+password = password_file.read().rstrip()
+password_file.close()
 user_agent = ("HelpfulAppStoreBot, linking to iOS Apps," + user)
 
 reddit = praw.Reddit(user_agent = user_agent)
@@ -189,4 +195,5 @@ while(keep_on):
 				already_done_file.write(comment.id+"\n");
 		else:
 			jlog("Hey, it's you- %s" % comment.id)
+	already_done_file.close()
 	time.sleep(30)
