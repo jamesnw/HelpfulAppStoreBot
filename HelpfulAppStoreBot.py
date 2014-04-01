@@ -138,7 +138,7 @@ jlog("logged in");
 #Look for comments
 subreddits = set()
 subreddits.add('iphone')
-#subreddits.add('ios')
+subreddits.add('ios')
 #subreddits.add('test')
 
 subreddit_list = '+'.join(subreddits)
