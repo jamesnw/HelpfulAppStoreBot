@@ -15,9 +15,9 @@ Currently enabled on [/r/iPhone](http://reddit.com/r/iPhone). More to come, afte
 ####Affiliate links
 Each link comes with an affiliate and a non-affiliate link. If you click the affiliate link, the developer will still get their 70%. I will get 7%, reducing Apple's take to 23%. I will be sharing these numbers periodically in the interest of transparency.
 
-As of March 30, 2014-
-* Clicks: 95
-* Items: 16
-* Commission: 0.98
-* Conversion Rate: 16.84%
-* Revenue: 13.97
+As of Apr 3, 2014-
+* Clicks: 281
+* Items: 43
+* Commission: 1.75
+* Conversion Rate: 15.30%
+* Revenue: 24.93

@@ -187,11 +187,18 @@ while(keep_on):
 								reply = reply + comment_reply(name = app.name, id = str(app.id))
 								already_done.add(comment.id)
 				if len(reply) > 0:
-					reply = reply + "\n [What is this?](http://www.reddit.com/r/iphone/comments/21s2yf/im_up_and_running_use_the_command_app_link/) - [Source](https://github.com/jamesnw/HelpfulAppStoreBot/)."
-					posted_reply = comment.reply(reply)
-					jlog("Replied to %s with %s" % (comment.id, posted_reply.id))
-					comment_posted = True
-					already_done_file.write(posted_reply.id+"\n");
+					try:
+						reply = reply + "\n [What is this?](http://www.reddit.com/r/iphone/comments/21s2yf/im_up_and_running_use_the_command_app_link/) - [Source](https://github.com/jamesnw/HelpfulAppStoreBot/)."
+						posted_reply = comment.reply(reply)
+						jlog("Replied to %s with %s" % (comment.id, posted_reply.id))
+						comment_posted = True
+						already_done_file.write(posted_reply.id+"\n");
+					except praw.errors.RateLimitExceeded as rl_error:
+						jlog("Doing too much, sleeping for " + str(rl_error.sleep_time))
+						time.sleep(rl_error.sleep_time)
+					except Exception as reply_exception:
+						jlog("Exception occurred while replying: " + str(reply_exception))
+						time.sleep(3)
 				already_done_file.write(comment.id+"\n");
 		else:
 			jlog("Hey, it's you- %s" % comment.id)
