@@ -108,16 +108,14 @@ class App:
 def exit_handler():
 	# Dump the caches
 	global appList
-    try:
-        with open(dbFile, 'w+') as db_file:
-            pickle.dump(appList, db_file)
-    	
-    except Exception as search_exception:
-    	jlog(str(search_exception))
-        pass
-
-    print("Shutting Down\n")
-    jlog("Shut down")
+	try:
+		with open(dbFile, 'w+') as db_file:
+			pickle.dump(appList, db_file)
+	except Exception as search_exception:
+		jlog(str(search_exception))
+		pass
+	print("Shutting Down\n")
+	jlog("Shut down")
 atexit.register(exit_handler)
 
 
