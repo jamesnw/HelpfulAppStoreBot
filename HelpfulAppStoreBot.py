@@ -21,7 +21,7 @@ me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running
 
 #file-wide setup
 
-dbFile = "/tmp/cachedapps.p"
+dbFile = "logs/cachedapps.p"
 
 #app store info
 affiliate_file = open("private/affiliate.txt", "r")
@@ -81,7 +81,8 @@ class App:
 	def __init__(self, searchterm):
 		self.searchterm = searchterm
 		self.success = 0
-		#Check if cache exists		
+		#Check if cache exists	
+		global appList	
 		for app in appList:
 			if(self.success != 1):
 				if app.searchterm == self.searchterm:
@@ -108,9 +109,11 @@ def exit_handler():
 	# Dump the caches
     try:
         with open(dbFile, 'w+') as db_file:
+        	global appList
             pickle.dump(appList, db_file)
     	
     except Exception as search_exception:
+    	jlog(str(search_exception))
         pass
 
     print("Shutting Down\n")
@@ -147,6 +150,7 @@ keep_on = True
 def kill_handler(sig, frame):
     global keep_on
     keep_on = False
+    jlog("Prompting to turn off")
     
 signal.signal(signal.SIGUSR1, kill_handler)
 
