@@ -107,9 +107,9 @@ class App:
 
 def exit_handler():
 	# Dump the caches
+	global appList
     try:
         with open(dbFile, 'w+') as db_file:
-        	global appList
             pickle.dump(appList, db_file)
     	
     except Exception as search_exception:
