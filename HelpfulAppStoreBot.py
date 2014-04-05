@@ -142,6 +142,8 @@ jlog("logged in");
 subreddits = set()
 subreddits.add('iphone')
 subreddits.add('ios')
+subreddits.add('apphookups')
+subreddits.add('iosgaming')
 #subreddits.add('test')
 
 subreddit_list = '+'.join(subreddits)
