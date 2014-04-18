@@ -180,7 +180,10 @@ while(keep_on):
 		time.sleep(3)
 	try:
 		subreddit_comments = subreddit.get_comments()
-
+	except Exception as reply_exception:
+		jlog("Exception occurred in get comments: " + str(reply_exception))
+		time.sleep(3)
+	try:
 		already_done_file = open('logs/already_done.txt','a+')
 		already_done = set(line.strip() for line in open('logs/already_done.txt'))
 		already_done_to_add = set()
