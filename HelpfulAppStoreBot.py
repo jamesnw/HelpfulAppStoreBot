@@ -125,7 +125,7 @@ def exit_handler():
 	email = user_file.read().rstrip()
 	user_file.close()
 	pw_file = open("private/email-password.txt", "r")
-	pw = user_file.read().rstrip()
+	pw = pw_file.read().rstrip()
 	pw_file.close()
 	session.login(email, pw)
 	headers = "\r\n".join(["from: " + email, "subject: HelpfulAppStoreBot Down!","to: " + email,"mime-version: 1.0","content-type: text/html"])
