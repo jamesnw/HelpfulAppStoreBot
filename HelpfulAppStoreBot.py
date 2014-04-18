@@ -175,6 +175,10 @@ while(keep_on):
 	jlog("Start loop")
 	try:
 		subreddit = reddit.get_subreddit(subreddit_list)
+	except Exception as reply_exception:
+		jlog("Exception occurred in get subreddit: " + str(reply_exception))
+		time.sleep(3)
+	try:
 		subreddit_comments = subreddit.get_comments()
 
 		already_done_file = open('logs/already_done.txt','a+')
