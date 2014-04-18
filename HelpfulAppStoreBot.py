@@ -156,7 +156,7 @@ jlog("logged in");
 subreddits = set()
 subreddits.add('iphone')
 subreddits.add('ios')
-subreddits.add('apphookups')
+#subreddits.add('apphookups')
 subreddits.add('iosgaming')
 #subreddits.add('test')
 
@@ -183,51 +183,54 @@ while(keep_on):
 	except Exception as reply_exception:
 		jlog("Exception occurred in get comments: " + str(reply_exception))
 		time.sleep(3)
-	already_done_file = open('logs/already_done.txt','a+')
-	already_done = set(line.strip() for line in open('logs/already_done.txt'))
-	already_done_to_add = set()
+	try:
+		already_done_file = open('logs/already_done.txt','a+')
+		already_done = set(line.strip() for line in open('logs/already_done.txt'))
+		already_done_to_add = set()
 
-	#load apps
-	if os.path.isfile(dbFile):
-		with open(dbFile, "r+") as fi:
-			if fi.tell() != os.fstat(fi.fileno()).st_size:
-				appList = pickle.load(fi)
+		#load apps
+		if os.path.isfile(dbFile):
+			with open(dbFile, "r+") as fi:
+				if fi.tell() != os.fstat(fi.fileno()).st_size:
+					appList = pickle.load(fi)
 
-	comment_posted = False
-	findAppLink = re.compile("\\bapp[\s]*link[\s]*:[\s]*(.*)", re.M)
+		comment_posted = False
+		findAppLink = re.compile("\\bapp[\s]*link[\s]*:[\s]*(.*)", re.M)
 
 
-	for comment in subreddit_comments:
-		if comment.author != user:
-			if comment.id not in already_done and comment_posted == False: 
-				jlog("\t%s" % comment.id)
-				reply = '';
-		
-				normalMatches = findAppLink.findall(comment.body.lower())
-				if len(normalMatches) > 0:
-					for match in normalMatches:
-						apps = match.split(",")
-						for appstring in apps:
-							app = App(appstring)
-							if(app.success):
-								reply = reply + comment_reply(name = app.name, id = str(app.id), subreddit = str(comment.subreddit))
-								already_done.add(comment.id)
-				if len(reply) > 0:
-					try:
-						reply = reply + "\n [What is this?](http://www.reddit.com/r/iphone/comments/21s2yf/im_up_and_running_use_the_command_app_link/) - [Source](https://github.com/jamesnw/HelpfulAppStoreBot/)."
-						posted_reply = comment.reply(reply)
-						jlog("Replied to %s with %s" % (comment.id, posted_reply.id))
-						comment_posted = True
-						already_done_file.write(posted_reply.id+"\n");
-					except praw.errors.RateLimitExceeded as rl_error:
-						jlog("Doing too much, sleeping for " + str(rl_error.sleep_time))
-						time.sleep(rl_error.sleep_time)
-					except Exception as reply_exception:
-						jlog("Exception occurred while replying: " + str(reply_exception))
-						time.sleep(3)
-				already_done_file.write(comment.id+"\n");
-		else:
-			jlog("Hey, it's you- %s" % comment.id)
-	already_done_file.close()
-	time.sleep(30)
-
+		for comment in subreddit_comments:
+			if comment.author != user:
+				if comment.id not in already_done and comment_posted == False: 
+					jlog("\t%s" % comment.id)
+					reply = '';
+			
+					normalMatches = findAppLink.findall(comment.body.lower())
+					if len(normalMatches) > 0:
+						for match in normalMatches:
+							apps = match.split(",")
+							for appstring in apps:
+								app = App(appstring)
+								if(app.success):
+									reply = reply + comment_reply(name = app.name, id = str(app.id), subreddit = str(comment.subreddit))
+									already_done.add(comment.id)
+					if len(reply) > 0:
+						try:
+							reply = reply + "\n [What is this?](http://www.reddit.com/r/iphone/comments/21s2yf/im_up_and_running_use_the_command_app_link/) - [Source](https://github.com/jamesnw/HelpfulAppStoreBot/)."
+							posted_reply = comment.reply(reply)
+							jlog("Replied to %s with %s" % (comment.id, posted_reply.id))
+							comment_posted = True
+							already_done_file.write(posted_reply.id+"\n");
+						except praw.errors.RateLimitExceeded as rl_error:
+							jlog("Doing too much, sleeping for " + str(rl_error.sleep_time))
+							time.sleep(rl_error.sleep_time)
+						except Exception as reply_exception:
+							jlog("Exception occurred while replying: " + str(reply_exception))
+							time.sleep(3)
+					already_done_file.write(comment.id+"\n");
+			else:
+				jlog("Hey, it's you- %s" % comment.id)
+		already_done_file.close()
+		time.sleep(30)
+	except Exception as reply_exception:
+		jlog("Exception occurred in main loop: " + str(reply_exception))
+		time.sleep(3)
