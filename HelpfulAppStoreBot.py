@@ -16,6 +16,7 @@ import os
 import time
 import signal
 from tendo import singleton
+import smtplib
 
 me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running
 
@@ -116,6 +117,21 @@ def exit_handler():
 		pass
 	print("Shutting Down\n")
 	jlog("Shut down")
+	#send email
+	session = smtplib.SMTP('smtp.gmail.com', 587)
+	session.ehlo()
+	session.starttls()
+	user_file = open("private/email-user.txt", "r")
+	email = user_file.read().rstrip()
+	user_file.close()
+	pw_file = open("private/email-password.txt", "r")
+	pw = user_file.read().rstrip()
+	pw_file.close()
+	session.login(email, pw)
+	headers = "\r\n".join(["from: " + email, "subject: HelpfulAppStoreBot Down!","to: " + email,"mime-version: 1.0","content-type: text/html"])
+	# body_of_email can be plaintext or html!                    
+	content = headers + "\r\n\r\n The bot is down."
+	session.sendmail(email, email, content)
 atexit.register(exit_handler)
 
 
