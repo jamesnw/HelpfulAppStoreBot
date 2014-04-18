@@ -210,7 +210,7 @@ while(keep_on):
 						for appstring in apps:
 							app = App(appstring)
 							if(app.success):
-								reply = reply + comment_reply(name = app.name, id = str(app.id), subreddit = comment.subreddit)
+								reply = reply + comment_reply(name = app.name, id = str(app.id), subreddit = str(comment.subreddit))
 								already_done.add(comment.id)
 				if len(reply) > 0:
 					try:
